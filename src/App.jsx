@@ -1,7 +1,29 @@
 import React, { useState } from "react";
-import haversine from "haversine";
-import Geocode from "react-geocode";
 import "./style.css";
+
+function haversine(coord1, coord2) {
+  
+  const toRadians = (degrees) => {
+    return degrees * (Math.PI / 180);
+  };
+
+  const earthRadiusKm = 6371;
+
+  const dLat = toRadians(coord2.latitude - coord1.latitude);
+  const dLon = toRadians(coord2.longitude - coord1.longitude);
+
+  const lat1 = toRadians(coord1.latitude);
+  const lat2 = toRadians(coord2.latitude);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  const distance = earthRadiusKm * c;
+  return distance;
+}
 
 function App() {
   const [startLocation, setStartLocation] = useState({
@@ -13,32 +35,30 @@ function App() {
     longitude: 0
   });
 
-  Geocode.setApiKey("AIzaSyCUxfBy-i0-ZxzGZKOOU_vJjtETNKwS1fk");
-
-  const handleStartLocationChange = (event) => {
+  const handleStartLocationChange = async (event) => {
     const { value } = event.target;
-    Geocode.fromAddress(value).then(
-      (response) => {
-        const { lat, lng } = response.results[0].geometry.location;
-        setStartLocation({ latitude: lat, longitude: lng });
-      },
-      (error) => {
-        console.error(error);
-      }
+    const response = await fetch(
+      `https://api.geoapify.com/v1/geocode/search?text=${value}&apiKey=3a628d5e95704fd8917c5dc38abde281`
     );
+    const data = await response.json();
+    const { lat, lon } = data.features[0].geometry;
+    setStartLocation({
+      latitude: parseFloat(lat),
+      longitude: parseFloat(lon)
+    });
   };
 
-  const handleFinalDestinationChange = (event) => {
+  const handleFinalDestinationChange = async (event) => {
     const { value } = event.target;
-    Geocode.fromAddress(value).then(
-      (response) => {
-        const { lat, lng } = response.results[0].geometry.location;
-        setFinalDestination({ latitude: lat, longitude: lng });
-      },
-      (error) => {
-        console.error(error);
-      }
+    const response = await fetch(
+      `https://api.geoapify.com/v1/geocode/search?text=${value}&apiKey=3a628d5e95704fd8917c5dc38abde281`
     );
+    const data = await response.json();
+    const { lat, lon } = data.features[0].geometry;
+    setFinalDestination({
+      latitude: parseFloat(lat),
+      longitude: parseFloat(lon)
+    });
   };
 
   const calculateDistance = () => {
@@ -56,15 +76,15 @@ function App() {
       <h1>DISTANCE CALCULATOR</h1>
       <input
         type="text"
-        placeholder="Input A (Latitude, longitude)"
+        placeholder="Input A (Latitude, Longitude)"
         onChange={handleStartLocationChange}
       />
       <input
         type="text"
-        placeholder="Input B (Latitude, longitude)"
+        placeholder="Input B (Latitude, Longitude)"
         onChange={handleFinalDestinationChange}
       />
-      <button onClick={calculateDistance}>Calculate Distance</button>
+      <button onClick={calculateDistance}>Calculate</button>
     </div>
   );
 }
