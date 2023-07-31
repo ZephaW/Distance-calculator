@@ -1,15 +1,13 @@
 .body {
-  background-image: https://4kwallpapers.com/images/wallpapers/planet-earth-night-view-illuminated-orbit-dark-background-5k-2560x1440-8934.jpg;
+  background-image: url('https://4kwallpapers.com/images/wallpapers/planet-earth-night-view-illuminated-orbit-dark-background-5k-2560x1440-8934.jpg');
   font-family: "Source Sans Pro", sans-serif;
   color: white;
   font-weight: 300;
   background: #50a3a2;
   width: 100%;
   height: 100%;
-  
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; 
 }
